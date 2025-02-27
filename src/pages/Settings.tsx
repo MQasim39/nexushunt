@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -12,8 +12,8 @@ const Settings = () => {
   const { user, updateProfile, updatePassword, loading } = useAuth();
   
   const [profileData, setProfileData] = useState({
-    username: user?.username || "",
-    email: user?.email || "",
+    username: "",
+    email: "",
   });
   
   const [passwordData, setPasswordData] = useState({
@@ -21,6 +21,16 @@ const Settings = () => {
     newPassword: "",
     confirmPassword: "",
   });
+
+  // Update the form when user data loads
+  useEffect(() => {
+    if (user) {
+      setProfileData({
+        username: user.username || "",
+        email: user.email || "",
+      });
+    }
+  }, [user]);
   
   const handleProfileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -79,6 +89,14 @@ const Settings = () => {
       // Error is handled in the auth context
     }
   };
+
+  if (!user) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <div className="w-16 h-16 border-4 border-neon border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6 animate-fade-in">

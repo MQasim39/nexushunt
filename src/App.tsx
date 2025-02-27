@@ -14,6 +14,7 @@ import AppLayout from "@/layouts/AppLayout";
 import Login from "@/pages/Login";
 import Signup from "@/pages/Signup";
 import ResetPassword from "@/pages/ResetPassword";
+import ResetPasswordConfirm from "@/pages/ResetPasswordConfirm";
 import Dashboard from "@/pages/Dashboard";
 import Resumes from "@/pages/Resumes";
 import Agent from "@/pages/Agent";
@@ -36,6 +37,7 @@ const App = () => (
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
               <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/reset-password-confirm" element={<ResetPasswordConfirm />} />
               
               {/* Protected Routes */}
               <Route path="/" element={<AppLayout />}>
