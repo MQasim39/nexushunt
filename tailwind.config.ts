@@ -114,6 +114,14 @@ export default {
 				pulse: {
 					"0%, 100%": { opacity: "1" },
 					"50%": { opacity: "0.5" }
+				},
+				"star-movement-bottom": {
+					"0%": { transform: "translate(0%, 0%)", opacity: "1" },
+					"100%": { transform: "translate(-100%, 0%)", opacity: "0" }
+				},
+				"star-movement-top": {
+					"0%": { transform: "translate(0%, 0%)", opacity: "1" },
+					"100%": { transform: "translate(100%, 0%)", opacity: "0" }
 				}
 			},
 			animation: {
@@ -129,7 +137,9 @@ export default {
 				"slide-out-left": "slide-out-left 0.3s ease-out",
 				"enter": "fade-in 0.3s ease-out, scale-in 0.2s ease-out",
 				"exit": "fade-out 0.3s ease-out, scale-out 0.2s ease-out",
-				pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite"
+				pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
+				"star-movement-bottom": "star-movement-bottom linear infinite alternate",
+				"star-movement-top": "star-movement-top linear infinite alternate"
 			}
 		}
 	},
