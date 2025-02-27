@@ -95,7 +95,7 @@ const Resumes = () => {
           />
           <Button
             onClick={handleUploadClick}
-            className="bg-neon text-black hover:bg-neon/90 hover:text-black/90 transition-colors"
+            variant="neon"
             disabled={loading}
           >
             <Upload className="mr-2 h-4 w-4" />
@@ -113,7 +113,8 @@ const Resumes = () => {
           </p>
           <Button
             onClick={handleUploadClick}
-            className="mt-6 bg-neon text-black hover:bg-neon/90 hover:text-black/90 transition-colors"
+            variant="neon"
+            className="mt-6"
           >
             <Upload className="mr-2 h-4 w-4" />
             Upload Resume

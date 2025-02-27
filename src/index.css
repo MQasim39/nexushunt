@@ -40,11 +40,13 @@
 @layer base {
   * {
     @apply border-border selection:bg-primary/10 selection:text-primary;
+    font-family: 'Poppins', sans-serif;
   }
   
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings: "ss01", "ss02", "cv01", "cv02", "cv03";
+    font-family: 'Poppins', sans-serif;
   }
 
   html {

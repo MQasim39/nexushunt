@@ -22,7 +22,7 @@ const Dashboard = () => {
             Here's an overview of your job search progress.
           </p>
         </div>
-        <Button asChild className="bg-neon text-black hover:bg-neon/90 hover:text-black/90 transition-colors">
+        <Button asChild variant="neon">
           <Link to="/resumes">
             <Upload className="mr-2 h-4 w-4" />
             Upload Resume
@@ -105,7 +105,8 @@ const Dashboard = () => {
                 </p>
                 <Button 
                   asChild 
-                  className="mt-4 bg-neon text-black hover:bg-neon/90 hover:text-black/90 transition-colors"
+                  variant="neon"
+                  className="mt-4"
                 >
                   <Link to="/resumes">
                     <Upload className="mr-2 h-4 w-4" />

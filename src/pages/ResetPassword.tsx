@@ -42,7 +42,8 @@ const ResetPassword = () => {
               Click the link in the email to reset your password. The link will expire in 1 hour.
             </p>
             <Button 
-              className="mt-6 bg-neon text-black hover:bg-neon/90 hover:text-black/90 transition-colors"
+              variant="neon"
+              className="mt-6"
               asChild
             >
               <Link to="/login">Back to Login</Link>
@@ -80,7 +81,8 @@ const ResetPassword = () => {
 
             <Button
               type="submit"
-              className="w-full bg-neon text-black hover:bg-neon/90 hover:text-black/90 transition-colors"
+              variant="neon"
+              className="w-full"
               disabled={loading}
             >
               {loading ? "Sending..." : "Send Reset Link"}

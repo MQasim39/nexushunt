@@ -103,7 +103,8 @@ const ResetPasswordConfirm = () => {
 
             <Button
               type="submit"
-              className="w-full bg-neon text-black hover:bg-neon/90 hover:text-black/90 transition-colors"
+              variant="neon"
+              className="w-full"
               disabled={loading}
             >
               {loading ? "Resetting..." : "Reset Password"}
