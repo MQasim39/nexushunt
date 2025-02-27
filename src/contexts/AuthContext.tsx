@@ -27,7 +27,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false); // Changed from true to false
 
   useEffect(() => {
     // Get initial session
@@ -84,49 +84,85 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const login = async (email: string, password: string, remember = false) => {
+    if (!email || !password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    
     setLoading(true);
     
     try {
       const { data, error } = await supabase.auth.signInWithPassword({
-        email,
+        email: email.trim().toLowerCase(),
         password,
       });
       
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
       
-      toast.success("Successfully logged in");
+      if (!data?.user) {
+        throw new Error("Authentication failed");
+      }
+
+      // Wait for auth state to update fully
+      await fetchUserProfile(data.user);
+      // Navigate to dashboard immediately after successful login
+      // Add small timeout to ensure state is fully updated
+    setTimeout(() => {
+      window.location.href = '/dashboard';
+      toast.success("Successfully logged in"); }, 500);
+      
     } catch (error: any) {
+      setLoading(false);
       toast.error(error.message || "Login failed");
       throw error;
     } finally {
       setLoading(false);
     }
   };
-
   const signup = async (email: string, username: string, password: string) => {
+    if (!email || !username || !password) {
+      toast.error("Please fill in all fields");
+      return;
+    }
+    
     setLoading(true);
     
     try {
+      // First, create the auth user
       const { data, error } = await supabase.auth.signUp({
-        email,
+        email: email.trim().toLowerCase(),
         password,
         options: {
-          data: {
-            username,
-          },
-        },
+          data: { username }
+        }
       });
       
-      if (error) {
-        throw error;
+      if (error) throw error;
+      if (!data?.user?.id) throw new Error('Failed to create user account');
+
+      // Then create the profile
+      const { error: profileError } = await supabase
+        .from('profiles')
+        .insert([{
+          id: data.user.id,
+          username,
+          email: email.trim().toLowerCase(),
+        }]);
+          
+      if (profileError) {
+        console.error('Profile creation failed:', profileError);
+        toast.error('Account created but profile setup failed. Please contact support.');
+        return;
       }
+
+      toast.success("Account created successfully!");
       
-      toast.success("Account created successfully. Please verify your email.");
+      // Navigate to login page
+      window.location.href = '/login';
+      
     } catch (error: any) {
-      toast.error(error.message || "Signup failed");
-      throw error;
+      console.error("Signup error:", error);
+      toast.error(error.message || "Failed to create account");
     } finally {
       setLoading(false);
     }
