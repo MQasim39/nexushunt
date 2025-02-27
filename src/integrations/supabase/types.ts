@@ -180,6 +180,7 @@ export type Database = {
           file_type: string | null
           filename: string
           id: string
+          is_selected: boolean | null
           uploaded_at: string | null
           user_id: string
         }
@@ -189,6 +190,7 @@ export type Database = {
           file_type?: string | null
           filename: string
           id?: string
+          is_selected?: boolean | null
           uploaded_at?: string | null
           user_id: string
         }
@@ -198,6 +200,7 @@ export type Database = {
           file_type?: string | null
           filename?: string
           id?: string
+          is_selected?: boolean | null
           uploaded_at?: string | null
           user_id?: string
         }
