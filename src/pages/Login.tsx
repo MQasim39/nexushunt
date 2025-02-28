@@ -1,5 +1,5 @@
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -11,11 +11,19 @@ import { StarBorder } from "@/components/ui/star-border";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login, loading } = useAuth();
+  const { login, loading, session } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  
+  // Redirect if already logged in
+  useEffect(() => {
+    if (session) {
+      console.log("User already logged in, redirecting to dashboard");
+      navigate('/dashboard');
+    }
+  }, [session, navigate]);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -28,14 +36,15 @@ const Login = () => {
     setIsSubmitting(true);
     
     try {
-      await login(email, password, rememberMe);
-      // On success, redirect to dashboard
-      setTimeout(() => {
-        navigate('/dashboard');
-      }, 1000); // Small delay to ensure state updates
-    } catch (error: any) {
-      console.error("Login submission error:", error);
-      // Error is handled in the auth context
+      console.log("Submitting login form");
+      await login(email, password);
+      
+      // Login is handled by the auth context
+      // If successful, we should get redirected by the useEffect above
+      console.log("Login function completed");
+    } catch (error) {
+      console.error("Login form submission error:", error);
+      // The error toast is displayed in the auth context
     } finally {
       setIsSubmitting(false);
     }
@@ -68,7 +77,7 @@ const Login = () => {
                   onChange={e => setEmail(e.target.value)} 
                   className="bg-background/50 border-border/50 focus:border-neon focus:ring-neon/20" 
                   required 
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || loading}
                 />
               </div>
 
@@ -87,7 +96,7 @@ const Login = () => {
                   onChange={e => setPassword(e.target.value)} 
                   className="bg-background/50 border-border/50 focus:border-neon focus:ring-neon/20" 
                   required 
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || loading}
                 />
               </div>
 
@@ -96,7 +105,7 @@ const Login = () => {
                   id="remember" 
                   checked={rememberMe} 
                   onCheckedChange={checked => setRememberMe(checked === true)} 
-                  disabled={isSubmitting}
+                  disabled={isSubmitting || loading}
                 />
                 <Label htmlFor="remember" className="text-sm font-normal">
                   Remember me
@@ -108,7 +117,7 @@ const Login = () => {
               <Button 
                 type="submit" 
                 variant="neon"
-                className="bg-transparent border border-neon text-neon hover:bg-neon/10 px-8" 
+                className="px-8 border border-neon text-neon hover:bg-neon/10" 
                 disabled={isSubmitting || loading}
               >
                 {isSubmitting || loading ? "Signing in..." : "Sign in"}
