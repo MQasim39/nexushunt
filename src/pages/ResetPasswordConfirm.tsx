@@ -63,7 +63,7 @@ const ResetPasswordConfirm = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 animate-fade-in">
-      <StarBorder as="div" className="w-full max-w-md" color="#00FF41">
+      <StarBorder as="div" className="w-full max-w-md" color="#FFFFFF">
         <div className="space-y-8">
           <div className="text-center">
             <h1 className="text-3xl font-bold text-neon">Reset Your Password</h1>

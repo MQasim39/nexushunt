@@ -48,11 +48,17 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     
     if (variant === "neon" || variant === "default") {
       return (
-        <Comp
-          className={cn(buttonVariants({ variant, size, className }))}
-          ref={ref}
-          {...props}
-        />
+        <StarBorder 
+          as={Comp} 
+          color="#FFFFFF" 
+          className={cn("p-0", className)}
+        >
+          <div
+            className={cn(buttonVariants({ variant, size, className: "w-full" }))}
+            ref={ref}
+            {...props}
+          />
+        </StarBorder>
       )
     }
     

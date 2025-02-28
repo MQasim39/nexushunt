@@ -52,7 +52,7 @@ const Signup = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center p-4 animate-fade-in">
-      <StarBorder as="div" className="w-full max-w-md" color="#00FF41">
+      <StarBorder as="div" className="w-full max-w-md" color="#FFFFFF">
         <div className="space-y-8">
           <div className="text-center">
             <h1 className="text-3xl font-bold text-neon">Create Account</h1>
@@ -109,8 +109,8 @@ const Signup = () => {
             <div className="flex justify-center">
               <Button
                 type="submit"
-                variant="neon"
-                className="bg-transparent border border-neon text-neon hover:bg-neon/10 px-8"
+                variant="outline"
+                className="bg-transparent border border-neon text-white hover:bg-neon/10 hover:text-neon px-8"
                 disabled={isSubmitting || loading}
               >
                 {isSubmitting || loading ? "Creating account..." : "Create Account"}

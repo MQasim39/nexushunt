@@ -55,7 +55,7 @@ const Login = () => {
       <StarBorder 
         as="div" 
         className="w-full max-w-md" 
-        color="#00FF41"
+        color="#FFFFFF"
       >
         <div className="space-y-8">
           <div className="text-center">
