@@ -116,8 +116,8 @@ const Login = () => {
             <div className="flex justify-center">
               <Button 
                 type="submit" 
-                variant="neon"
-                className="px-8 border border-neon text-neon hover:bg-neon/10" 
+                variant="outline"
+                className="px-8 border border-neon text-white hover:bg-neon/10 hover:text-neon transition-colors" 
                 disabled={isSubmitting || loading}
               >
                 {isSubmitting || loading ? "Signing in..." : "Sign in"}
