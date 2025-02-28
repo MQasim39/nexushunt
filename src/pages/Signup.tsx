@@ -11,7 +11,6 @@ import { StarBorder } from "@/components/ui/star-border";
 const Signup = () => {
   const navigate = useNavigate();
   const { signup, loading } = useAuth();
-  const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
@@ -19,7 +18,7 @@ const Signup = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!username || !email || !password || !confirmPassword) {
+    if (!email || !password || !confirmPassword) {
       toast.error("Please fill in all fields");
       return;
     }
@@ -35,8 +34,8 @@ const Signup = () => {
     }
     
     try {
-      await signup(email, username, password);
-      navigate("/dashboard");
+      await signup(email, password);
+      navigate("/login");
     } catch (error) {
       // Error is handled in the auth context
     }
@@ -55,19 +54,6 @@ const Signup = () => {
 
           <form className="space-y-6" onSubmit={handleSubmit}>
             <div className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="username">Username</Label>
-                <Input
-                  id="username"
-                  type="text"
-                  placeholder="johndoe"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="bg-background/50 border-border/50 focus:border-neon focus:ring-neon/20"
-                  required
-                />
-              </div>
-
               <div className="space-y-2">
                 <Label htmlFor="email">Email</Label>
                 <Input

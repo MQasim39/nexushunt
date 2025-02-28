@@ -15,7 +15,7 @@ type AuthContextType = {
   session: Session | null;
   loading: boolean;
   login: (email: string, password: string, remember?: boolean) => Promise<void>;
-  signup: (email: string, username: string, password: string) => Promise<void>;
+  signup: (email: string, password: string) => Promise<void>; // Removed username parameter
   logout: () => Promise<void>;
   resetPassword: (email: string) => Promise<void>;
   updateProfile: (data: Partial<AuthUser>) => Promise<void>;
@@ -27,7 +27,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(false); // Changed from true to false
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     // Get initial session
@@ -73,7 +73,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       setUser({
         id: authUser.id,
         email: authUser.email || '',
-        username: data.username || '',
+        username: data?.username || '',
       });
     } catch (error) {
       console.error('Error fetching user profile:', error);
@@ -103,24 +103,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error("Authentication failed");
       }
 
+      toast.success("Successfully logged in");
+      
       // Wait for auth state to update fully
       await fetchUserProfile(data.user);
-      // Navigate to dashboard immediately after successful login
-      // Add small timeout to ensure state is fully updated
-    setTimeout(() => {
+      
+      // Navigate to dashboard after successful login
       window.location.href = '/dashboard';
-      toast.success("Successfully logged in"); }, 500);
       
     } catch (error: any) {
+      console.error("Login error:", error);
       setLoading(false);
       toast.error(error.message || "Login failed");
-      throw error;
-    } finally {
-      setLoading(false);
     }
   };
-  const signup = async (email: string, username: string, password: string) => {
-    if (!email || !username || !password) {
+
+  const signup = async (email: string, password: string) => {
+    if (!email || !password) {
       toast.error("Please fill in all fields");
       return;
     }
@@ -132,13 +131,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       const { data, error } = await supabase.auth.signUp({
         email: email.trim().toLowerCase(),
         password,
-        options: {
-          data: { username }
-        }
       });
       
       if (error) throw error;
       if (!data?.user?.id) throw new Error('Failed to create user account');
+
+      // Generate a username from the email
+      const username = email.split('@')[0];
 
       // Then create the profile
       const { error: profileError } = await supabase
@@ -155,7 +154,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         return;
       }
 
-      toast.success("Account created successfully!");
+      toast.success("Account created successfully! Please log in.");
       
       // Navigate to login page
       window.location.href = '/login';

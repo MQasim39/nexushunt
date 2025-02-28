@@ -27,7 +27,6 @@ const Login = () => {
     }
     try {
       await login(email, password, rememberMe);
-      navigate("/dashboard");
     } catch (error) {
       // Error is handled in the auth context
     }
@@ -93,14 +92,16 @@ const Login = () => {
               </div>
             </div>
 
-            <Button 
-              type="submit" 
-              variant="neon"
-              className="w-full" 
-              disabled={loading}
-            >
-              {loading ? "Signing in..." : "Sign in"}
-            </Button>
+            <div className="flex justify-center">
+              <Button 
+                type="submit" 
+                variant="neon"
+                className="bg-transparent border border-neon text-neon hover:bg-neon/10 px-8" 
+                disabled={loading}
+              >
+                {loading ? "Signing in..." : "Sign in"}
+              </Button>
+            </div>
 
             <div className="text-center text-sm">
               <span className="text-muted-foreground">Don't have an account?</span>{" "}
