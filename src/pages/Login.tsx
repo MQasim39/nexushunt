@@ -11,24 +11,33 @@ import { StarBorder } from "@/components/ui/star-border";
 
 const Login = () => {
   const navigate = useNavigate();
-  const {
-    login,
-    loading
-  } = useAuth();
+  const { login, loading } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
   
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    
     if (!email || !password) {
       toast.error("Please fill in all fields");
       return;
     }
+    
+    setIsSubmitting(true);
+    
     try {
       await login(email, password, rememberMe);
-    } catch (error) {
+      // On success, redirect to dashboard
+      setTimeout(() => {
+        navigate('/dashboard');
+      }, 1000); // Small delay to ensure state updates
+    } catch (error: any) {
+      console.error("Login submission error:", error);
       // Error is handled in the auth context
+    } finally {
+      setIsSubmitting(false);
     }
   };
   
@@ -59,6 +68,7 @@ const Login = () => {
                   onChange={e => setEmail(e.target.value)} 
                   className="bg-background/50 border-border/50 focus:border-neon focus:ring-neon/20" 
                   required 
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -77,6 +87,7 @@ const Login = () => {
                   onChange={e => setPassword(e.target.value)} 
                   className="bg-background/50 border-border/50 focus:border-neon focus:ring-neon/20" 
                   required 
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -85,6 +96,7 @@ const Login = () => {
                   id="remember" 
                   checked={rememberMe} 
                   onCheckedChange={checked => setRememberMe(checked === true)} 
+                  disabled={isSubmitting}
                 />
                 <Label htmlFor="remember" className="text-sm font-normal">
                   Remember me
@@ -97,9 +109,9 @@ const Login = () => {
                 type="submit" 
                 variant="neon"
                 className="bg-transparent border border-neon text-neon hover:bg-neon/10 px-8" 
-                disabled={loading}
+                disabled={isSubmitting || loading}
               >
-                {loading ? "Signing in..." : "Sign in"}
+                {isSubmitting || loading ? "Signing in..." : "Sign in"}
               </Button>
             </div>
 

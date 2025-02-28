@@ -14,6 +14,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,11 +34,19 @@ const Signup = () => {
       return;
     }
     
+    setIsSubmitting(true);
+    
     try {
       await signup(email, password);
-      navigate("/login");
+      // After signup, redirect to login
+      setTimeout(() => {
+        navigate("/login");
+      }, 1000); // Small delay to ensure state updates
     } catch (error) {
       // Error is handled in the auth context
+      console.error("Signup submission error:", error);
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -64,6 +73,7 @@ const Signup = () => {
                   onChange={(e) => setEmail(e.target.value)}
                   className="bg-background/50 border-border/50 focus:border-neon focus:ring-neon/20"
                   required
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -77,6 +87,7 @@ const Signup = () => {
                   onChange={(e) => setPassword(e.target.value)}
                   className="bg-background/50 border-border/50 focus:border-neon focus:ring-neon/20"
                   required
+                  disabled={isSubmitting}
                 />
               </div>
 
@@ -90,18 +101,21 @@ const Signup = () => {
                   onChange={(e) => setConfirmPassword(e.target.value)}
                   className="bg-background/50 border-border/50 focus:border-neon focus:ring-neon/20"
                   required
+                  disabled={isSubmitting}
                 />
               </div>
             </div>
 
-            <Button
-              type="submit"
-              variant="neon"
-              className="w-full"
-              disabled={loading}
-            >
-              {loading ? "Creating account..." : "Create Account"}
-            </Button>
+            <div className="flex justify-center">
+              <Button
+                type="submit"
+                variant="neon"
+                className="bg-transparent border border-neon text-neon hover:bg-neon/10 px-8"
+                disabled={isSubmitting || loading}
+              >
+                {isSubmitting || loading ? "Creating account..." : "Create Account"}
+              </Button>
+            </div>
 
             <div className="text-center text-sm">
               <span className="text-muted-foreground">Already have an account?</span>{" "}
