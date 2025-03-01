@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from "react";
 import { toast } from "sonner";
 import { supabase, logSupabaseError } from "@/lib/supabase";
@@ -27,7 +26,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [session, setSession] = useState<Session | null>(null);
-  const [loading, setLoading] = useState(false); // Start with false to avoid initial "signing in" state
+  const [loading, setLoading] = useState(true); // Start with true to indicate initial loading
 
   // Single useEffect for auth initialization
   useEffect(() => {
@@ -70,17 +69,20 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         
         if (error) {
           logSupabaseError("getSession", error);
+          setLoading(false);
           return;
         }
         
         setSession(data.session);
         
         if (data.session?.user) {
-          setLoading(true); // Only set loading if we need to fetch profile
           await fetchUserProfile(data.session.user);
+        } else {
+          setLoading(false); // No session, so we're done loading
         }
       } catch (error) {
         console.error("Unexpected error in getInitialSession:", error);
+        setLoading(false);
       }
     };
 
@@ -90,11 +92,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       async (event, currentSession) => {
         console.log("Auth state change:", event);
         
+        if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED') {
+          setLoading(true); // Set loading to true when auth state changes
+        }
+        
         if (currentSession) {
           setSession(currentSession);
           
           if (currentSession.user) {
-            setLoading(true);
             await fetchUserProfile(currentSession.user);
           }
         } else {
@@ -131,12 +136,14 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       if (error) throw error;
       
       if (!data?.user) {
+        setLoading(false); // Reset loading if no user
         throw new Error("Authentication failed");
       }
       
       toast.success("Successfully logged in");
       
       // Auth state listener will handle the rest
+      // Don't set loading to false here - let the auth state change handler do it
     } catch (error) {
       setLoading(false);
       
@@ -200,7 +207,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
 
       toast.success("Account created successfully!");
-      setLoading(false);
+      
+      // Don't set loading to false here - let the auth state listener do it
       
     } catch (error) {
       setLoading(false);
@@ -222,6 +230,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   // Rest of your functions remain the same
   const logout = async () => {
     try {
+      setLoading(true); // Set loading to true during logout
       localStorage.removeItem('rememberMe');
       const { error } = await supabase.auth.signOut();
       
@@ -230,9 +239,11 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       }
       
       toast.success("Logged out successfully");
+      // The auth state listener will set loading to false
     } catch (error) {
       console.error("Logout error:", error);
       toast.error("Failed to log out");
+      setLoading(false);
     }
   };
 
@@ -247,6 +258,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     logout,
     resetPassword: async (email: string) => {
       try {
+        setLoading(true);
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
           redirectTo: `${window.location.origin}/auth/reset-password`,
         });
@@ -257,10 +269,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } catch (error) {
         console.error("Reset password error:", error);
         toast.error("Failed to send password reset email");
+      } finally {
+        setLoading(false);
       }
     },
     updateProfile: async (data: Partial<AuthUser>) => {
       try {
+        setLoading(true);
         if (!user) throw new Error("No user logged in");
         
         // Update the profile in the database
@@ -278,10 +293,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } catch (error) {
         console.error("Update profile error:", error);
         toast.error("Failed to update profile");
+      } finally {
+        setLoading(false);
       }
     },
     updatePassword: async (currentPassword: string, newPassword: string) => {
       try {
+        setLoading(true);
         const { error } = await supabase.auth.updateUser({
           password: newPassword
         });
@@ -292,6 +310,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       } catch (error) {
         console.error("Update password error:", error);
         toast.error("Failed to update password");
+      } finally {
+        setLoading(false);
       }
     }
   };
